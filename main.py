@@ -120,6 +120,7 @@ class Application:
         except Exception as e:
             tkinter.messagebox.showerror("Erro", f"Ocorreu um erro: {e}")
 
+    # Método para adicionar produtos ao carrinho
     def add_to_cart(self, *args, **kwargs):
         try:
             self.quantity_value = int(self.quantity_e.get())
@@ -148,6 +149,7 @@ class Application:
         except Exception as e:
             tkinter.messagebox.showerror("Erro", f"Ocorreu um erro: {e}")
 
+    # Método para calcular o troco
     def calculate_change(self, *args, **kwargs):
         try:
             total_paid = float(self.total_paid_entry.get())
@@ -159,7 +161,8 @@ class Application:
                 self.change_label.configure(text=f"Troco: R$ {change:.2f}", fg="green")
         except ValueError:
             tkinter.messagebox.showerror("Erro", "Digite um valor válido para o total pago.")
-
+         
+         # Método para gerar o recibo
     def generate_receipt(self, *args, **kwargs):
         total = sum(cart_price)
         self.receipt_area.delete(1.0, END)

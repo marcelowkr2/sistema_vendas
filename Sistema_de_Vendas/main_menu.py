@@ -33,6 +33,13 @@ class MainMenu:
         )
         self.sales_btn.pack(pady=10)
 
+        # Botão para abrir a tela de cadastro de usuários
+        self.register_btn = Button(
+            master, text="Cadastrar Usuário", font=("Arial", 14),
+            width=20, height=2, bg="blue", fg="white", command=self.open_register
+        )
+        self.register_btn.pack(pady=10)
+
     def open_add_to_db(self):
         subprocess.Popen(["python", r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\add_to_db.py"])
 
@@ -41,6 +48,9 @@ class MainMenu:
 
     def open_main(self):
         subprocess.Popen(["python", r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\main.py"])
+
+    def open_register(self):
+        subprocess.Popen(["python", r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\register.py"])    
 
 
 # Inicialização da interface

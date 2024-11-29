@@ -3,6 +3,9 @@ from tkinter import ttk
 import sqlite3
 import tkinter.messagebox
 import datetime
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import os
 
 # Obtenha a data atual e formate-a
 date = datetime.datetime.now().strftime("%d/%m/%Y")
@@ -87,11 +90,10 @@ class Application:
             record = result.fetchone()  # Obtém apenas o primeiro registro encontrado
 
             if record:
-                # Ajuste o desempacotamento conforme a estrutura da tabela
-                self.get_id = record[0]  # Supondo que a primeira coluna seja o ID
-                self.get_name = record[1]  # Supondo que a segunda coluna seja o nome
-                self.get_stock = record[2]  # Supondo que a terceira coluna seja o estoque
-                self.get_price = record[3]  # Supondo que a quarta coluna seja o preço
+                self.get_id = record[0]
+                self.get_name = record[1]
+                self.get_stock = record[2]
+                self.get_price = record[3]
 
                 self.productname.configure(text="Produto: " + str(self.get_name))
                 self.pprice.configure(text="Preço: R$ " + str(self.get_price))
@@ -120,7 +122,6 @@ class Application:
         except Exception as e:
             tkinter.messagebox.showerror("Erro", f"Ocorreu um erro: {e}")
 
-    # Método para adicionar produtos ao carrinho
     def add_to_cart(self, *args, **kwargs):
         try:
             self.quantity_value = int(self.quantity_e.get())
@@ -130,14 +131,11 @@ class Application:
                 desconto = float(self.discount_e.get())
                 self.final_price = (float(self.quantity_value) * float(self.get_price)) - desconto
 
-                # Adicionar os dados à tabela
                 self.cart_table.insert("", END, values=(self.get_name, self.quantity_value, f"R$ {self.final_price:.2f}"))
 
-                # Atualizar o total
                 cart_price.append(self.final_price)
                 self.total_l.configure(text="Total: R$ " + f"{sum(cart_price):.2f}")
 
-                # Resetar campos
                 self.quantity_l.destroy()
                 self.quantity_e.destroy()
                 self.discount_l.destroy()
@@ -149,7 +147,6 @@ class Application:
         except Exception as e:
             tkinter.messagebox.showerror("Erro", f"Ocorreu um erro: {e}")
 
-    # Método para calcular o troco
     def calculate_change(self, *args, **kwargs):
         try:
             total_paid = float(self.total_paid_entry.get())
@@ -162,7 +159,6 @@ class Application:
         except ValueError:
             tkinter.messagebox.showerror("Erro", "Digite um valor válido para o total pago.")
          
-         # Método para gerar o recibo
     def generate_receipt(self, *args, **kwargs):
         total = sum(cart_price)
         self.receipt_area.delete(1.0, END)
@@ -172,20 +168,56 @@ class Application:
         self.receipt_area.insert(END, f"Produto\t\tQtd\tPreço Total\n")
         self.receipt_area.insert(END, f"{'-'*40}\n")
 
+        pdf_data = [["Produto", "Quantidade", "Preço Total"]]
+
         for item in self.cart_table.get_children():
             produto, quantidade, preco_total = self.cart_table.item(item, "values")
             self.receipt_area.insert(END, f"{produto}\t{quantidade}\t{preco_total}\n")
+            pdf_data.append([produto, quantidade, preco_total])
 
         self.receipt_area.insert(END, f"{'-'*40}\n")
         self.receipt_area.insert(END, f"TOTAL: R$ {total:.2f}\n")
         self.receipt_area.insert(END, f"{'-'*40}\n")
         self.receipt_area.insert(END, f"Obrigado e volte sempre!\n")
 
-# Inicialização da interface Tkinter
-root = Tk()
-cart_price = []  # Lista para guardar os preços dos produtos no carrinho
-b = Application(root)
+        # Gerar o recibo em PDF
+        pdf_path = os.path.join(os.getcwd(), "recibo.pdf")
+        pdf_canvas = canvas.Canvas(pdf_path, pagesize=letter)
+        pdf_canvas.setFont("Helvetica", 12)
+        y = 750  # Coordenada inicial no eixo Y
 
-root.geometry("1366x768+0+0")
-root.title("Supermercado")
-root.mainloop()
+        pdf_canvas.drawString(50, y, "Supermercado Tabajara")
+        y -= 20
+        pdf_canvas.drawString(50, y, f"Data: {date}")
+        y -= 20
+        pdf_canvas.drawString(50, y, "-" * 60)
+        y -= 20
+
+        # Adicionando os itens ao PDF
+        for linha in pdf_data:
+            linha_texto = f"{linha[0]:<20} {linha[1]:<10} {linha[2]:<10}"
+            pdf_canvas.drawString(50, y, linha_texto)
+            y -= 20
+            if y < 50:  # Evitar ultrapassar o limite da página
+                pdf_canvas.showPage()
+                pdf_canvas.setFont("Helvetica", 12)
+                y = 750
+
+        pdf_canvas.drawString(50, y, "-" * 60)
+        y -= 20
+        pdf_canvas.drawString(50, y, f"TOTAL: R$ {total:.2f}")
+        y -= 20
+        pdf_canvas.drawString(50, y, "-" * 60)
+        y -= 20
+        pdf_canvas.drawString(50, y, "Obrigado e volte sempre!")
+
+        pdf_canvas.save()
+
+        tkinter.messagebox.showinfo("Recibo Gerado", f"Recibo salvo em: {pdf_path}")
+
+if __name__ == "__main__":
+    root = Tk()
+    cart_price = []
+    app = Application(root)
+    root.geometry("1366x768+0+0")
+    root.mainloop()

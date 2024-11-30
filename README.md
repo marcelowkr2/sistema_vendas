@@ -67,13 +67,13 @@ Em seguida, execute:
 
 ### Capturas de Tela
 ### Tela Inicial Menu
-<img src="Sistema_de_Vendas\imagens\teal02.png" width="500" height="300"></br></br>
+<img src="Sistema_de_Vendas\imagens\tela02.png" width="500" height="300"></br></br>
 
 ### Carrinho e Recibo
-<img src="Sistema_de_Vendas\imagens\teal01.png" width="500" height="300"></br></br>
+<img src="Sistema_de_Vendas\imagens\tela01.png" width="500" height="300"></br></br>
 
 ### Cadastro de Produto
-<img src="Sistema_de_Vendas\imagens\teal03.png" width="500" height="300"></br></br>
+<img src="Sistema_de_Vendas\imagens\tela03.png" width="500" height="300"></br></br>
 
 
 

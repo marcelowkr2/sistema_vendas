@@ -5,6 +5,7 @@ import tkinter.messagebox
 import datetime
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from PIL import Image, ImageTk
 import os
 
 # Obtenha a data atual e formate-a
@@ -14,42 +15,56 @@ date = datetime.datetime.now().strftime("%d/%m/%Y")
 conn = sqlite3.connect(r'C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\Database\store.db')
 c = conn.cursor()
 
+
 class Application:
     def __init__(self, master, *args, **kwargs):
         self.master = master
 
+        # Carregar as imagens de fundo
+        self.left_bg = PhotoImage(file=r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\imagens\back04.png")
+        self.right_bg = PhotoImage(file=r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\imagens\back01.png")
+
+        # Frame esquerdo
         self.left = Frame(master, width=700, height=760, bg='white')
-        self.left.pack(side=LEFT)
+        self.left.pack(side=LEFT, fill=BOTH)
 
-        self.right = Frame(master, width=666, height=768, bg='lightblue')
-        self.right.pack(side=RIGHT)
+         # Label para o background esquerdo
+        self.left_bg_label = Label(self.left, image=self.left_bg)
+        self.left_bg_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-        # Componentes do lado esquerdo
-        self.heading = Label(self.left, text="Supermercado Tabajara:", font=('arial 40 bold'), fg='steelblue', bg='white')
-        self.heading.place(x=0, y=0)
 
-        # Atualize o Label para exibir a data formatada
-        self.date_l = Label(self.right, text="Data: " + date, font=('arial 16 bold'), fg='white', bg='lightblue')
-        self.date_l.place(x=0, y=0)
+        # Frame direito
+        self.right = Frame(master, width=666, height=768, bg='lightblue', relief=RIDGE, borderwidth=2)
+        self.right.pack(side=RIGHT, fill=BOTH)
+
+        # Label para o background direito
+        self.right_bg_label = Label(self.right, image=self.right_bg)
+        self.right_bg_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+
+        # Carregar a imagem da logomarca
+        logo_image = Image.open(r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\imagens\mercado-todo-dia-logo.png")  # Atualize com o caminho correto
+        logo_image = logo_image.resize((700, 100))  # Redimensione para o tamanho desejado
+        self.logo_photo = ImageTk.PhotoImage(logo_image)
+
+        # Substituir o título por uma logomarca
+        self.logo_label = Label(self.left, image=self.logo_photo, bg='red')
+        self.logo_label.place(x=10, y=0)  # Ajuste as coordenadas conforme necessário
 
         self.enterid = Label(self.left, text="ID do Produto:", font=('arial 18 bold'), fg='black', bg='white')
-        self.enterid.place(x=0, y=80)
+        self.enterid.place(x=0, y=120)
 
         self.enteride = Entry(self.left, width=25, font=('arial 18 bold'), bg='lightblue')
-        self.enteride.place(x=190, y=80)
+        self.enteride.place(x=190, y=120)
 
         self.search_btn = Button(self.left, text="Pesquisar", width=22, height=2, bg='steelblue', fg='white', command=self.jx)
-        self.search_btn.place(x=350, y=120)
+        self.search_btn.place(x=350, y=160)
 
         self.productname = Label(self.left, text="", font=('arial 18 bold'), fg='black', bg='white')
         self.productname.place(x=0, y=200)
 
         self.pprice = Label(self.left, text="", font=('arial 18 bold'), fg='black', bg='white')
         self.pprice.place(x=0, y=250)
-
-        # Total label
-        self.total_l = Label(self.right, text="Total: R$ 0.00", font=('arial 27 bold'), fg='black', bg='lightblue')
-        self.total_l.place(x=0, y=450)
 
         # Campo para valor pago e troco
         self.total_paid_label = Label(self.left, text="Total Pago:", font=('arial 18 bold'), fg='black', bg='white')
@@ -68,19 +83,38 @@ class Application:
         self.bill_btn = Button(self.left, text="Gerar Recibo", width=22, height=2, bg='red', fg='white', command=self.generate_receipt)
         self.bill_btn.place(x=350, y=640)
 
-        # Tabela (Treeview) para exibir produtos no carrinho
-        self.cart_table = ttk.Treeview(self.right, columns=("Produto", "Quantidade", "Preço Total"), show='headings', height=15)
+        # Data
+        self.date_l = Label(self.right, text="Data: " + date, font=('arial 16 bold'), fg='white', bg='red')
+        self.date_l.place(x=20, y=10)
+
+        # Total
+        self.total_l = Label(self.right, text="Total: R$ 0.00", font=('arial 27 bold'), fg='white', bg='red')
+        self.total_l.place(x=20, y=60)
+
+        # Estilo para Treeview
+        style = ttk.Style()
+        style.configure("Treeview", font=('Arial', 14), rowheight=30)
+        style.configure("Treeview.Heading", font=('Arial', 16, 'bold'))
+
+        # Tabela (Treeview)
+        self.cart_table = ttk.Treeview(
+            self.right,
+            columns=("Produto", "Quantidade", "Preço Total"),
+            show='headings',
+            height=10,
+            selectmode="extended"
+        )
         self.cart_table.heading("Produto", text="Produto")
         self.cart_table.heading("Quantidade", text="Quantidade")
         self.cart_table.heading("Preço Total", text="Preço Total")
-        self.cart_table.column("Produto", anchor=CENTER, width=150)
-        self.cart_table.column("Quantidade", anchor=CENTER, width=100)
-        self.cart_table.column("Preço Total", anchor=CENTER, width=120)
-        self.cart_table.place(x=0, y=50)
+        self.cart_table.column("Produto", anchor=CENTER, width=200)
+        self.cart_table.column("Quantidade", anchor=CENTER, width=150)
+        self.cart_table.column("Preço Total", anchor=CENTER, width=150)
+        self.cart_table.place(x=20, y=120, width=600, height=300)
 
-        # Área para exibição do recibo
+        # Área de recibo
         self.receipt_area = Text(self.right, width=40, height=10, font=('arial', 12), bg='white', fg='black')
-        self.receipt_area.place(x=0, y=500)
+        self.receipt_area.place(x=20, y=450)
 
     def jx(self, *args, **kwargs):
         try:
@@ -162,22 +196,22 @@ class Application:
     def generate_receipt(self, *args, **kwargs):
         total = sum(cart_price)
         self.receipt_area.delete(1.0, END)
-        self.receipt_area.insert(END, f"Supermercado Tabajara\n")
+        self.receipt_area.insert(END, f"Supermercado Todo Dia\n")
         self.receipt_area.insert(END, f"Data: {date}\n")
-        self.receipt_area.insert(END, f"{'-'*40}\n")
+        self.receipt_area.insert(END, f"{'-'*60}\n")
         self.receipt_area.insert(END, f"Produto\t\tQtd\tPreço Total\n")
-        self.receipt_area.insert(END, f"{'-'*40}\n")
+        self.receipt_area.insert(END, f"{'-'*60}\n")
 
         pdf_data = [["Produto", "Quantidade", "Preço Total"]]
 
         for item in self.cart_table.get_children():
             produto, quantidade, preco_total = self.cart_table.item(item, "values")
-            self.receipt_area.insert(END, f"{produto}\t{quantidade}\t{preco_total}\n")
+            self.receipt_area.insert(END, f"{produto}\t\t{quantidade}\t{preco_total}\n")
             pdf_data.append([produto, quantidade, preco_total])
 
-        self.receipt_area.insert(END, f"{'-'*40}\n")
+        self.receipt_area.insert(END, f"{'-'*60}\n")
         self.receipt_area.insert(END, f"TOTAL: R$ {total:.2f}\n")
-        self.receipt_area.insert(END, f"{'-'*40}\n")
+        self.receipt_area.insert(END, f"{'-'*60}\n")
         self.receipt_area.insert(END, f"Obrigado e volte sempre!\n")
 
         # Gerar o recibo em PDF

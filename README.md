@@ -66,11 +66,14 @@ Em seguida, execute:
 **python sistema_vendas.py**
 
 ### Capturas de Tela
-### Tela Inicial
-[Adicione uma captura de tela aqui]
+### Tela Inicial Menu
+<img src="Sistema_de_Vendas\imagens\teal02.png" width="500" height="300"></br></br>
 
 ### Carrinho e Recibo
-[Adicione uma captura de tela aqui]
+<img src="Sistema_de_Vendas\imagens\teal01.png" width="500" height="300"></br></br>
+
+### Cadastro de Produto
+<img src="Sistema_de_Vendas\imagens\teal03.png" width="500" height="300"></br></br>
 
 
 

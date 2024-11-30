@@ -9,7 +9,7 @@ class MainMenu:
         self.master.geometry("500x600")
 
         # Imagem de fundo
-        self.background_image = Image.open(r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\imagens\background.jpg")
+        self.background_image = Image.open(r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\imagens\back01.png")
         self.background_image = self.background_image.resize((500, 600), Image.Resampling.LANCZOS)  # Substitui ANTIALIAS
         self.bg_photo = ImageTk.PhotoImage(self.background_image)
 

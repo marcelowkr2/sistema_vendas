@@ -16,7 +16,7 @@ class UpdateProduct:
         self.heading = Label(master, text="Atualizar Produto", font=('arial 30 bold'), fg='steelblue')
         self.heading.place(x=400, y=0)
 
-       # Campo para buscar o produto
+        # Campo para buscar o produto
         self.search_label = Label(master, text="ID do Produto:", font=('arial 18 bold'))
         self.search_label.place(x=250, y=70)  # Ajuste para centralizar o rótulo
 
@@ -25,7 +25,6 @@ class UpdateProduct:
 
         self.search_btn = Button(master, text="Buscar", width=10, height=1, bg='orange', fg='white', command=self.search_product)
         self.search_btn.place(x=700, y=70)  # Ajuste para centralizar o botão
-
 
         # Labels e campos para edição
         labels = [
@@ -70,9 +69,23 @@ class UpdateProduct:
                 return
 
             # Preencher os campos com os dados do produto
-            for i, value in enumerate(product[1:7]):  # Pula o ID (coluna 0)
-                self.entries[i].delete(0, END)
-                self.entries[i].insert(0, str(value))
+            self.entries[0].delete(0, END)  # Nome do Produto
+            self.entries[0].insert(0, str(product[1]))  # Índice 1 = name
+
+            self.entries[1].delete(0, END)  # Estoque
+            self.entries[1].insert(0, str(product[2]))  # Índice 2 = stock
+
+            self.entries[2].delete(0, END)  # Preço de Custo
+            self.entries[2].insert(0, str(product[3]))  # Índice 3 = cp (Preço de custo)
+
+            self.entries[3].delete(0, END)  # Preço de Venda
+            self.entries[3].insert(0, str(product[4]))  # Índice 4 = sp (Preço de venda)
+
+            self.entries[4].delete(0, END)  # Fornecedor
+            self.entries[4].insert(0, str(product[8]))  # Índice 8 = vendor (Fornecedor)
+
+            self.entries[5].delete(0, END)  # Telefone do Fornecedor
+            self.entries[5].insert(0, str(product[9]))  # Índice 9 = vendor_ph (Telefone do fornecedor)
 
             self.tBox.insert(END, f"\nProduto com ID {product_id} carregado para edição.\n")
 

@@ -6,7 +6,7 @@ class MainMenu:
     def __init__(self, master):
         self.master = master
         self.master.title("Sistema de Vendas - Menu Principal")
-        self.master.geometry("500x600")
+        self.master.geometry("500x500")
 
         # Imagem de fundo
         self.background_image = Image.open(r"C:\Users\marce\OneDrive\Área de Trabalho\SistemaDeVendasPython\Sistema_de_Vendas\imagens\back01.png")
@@ -20,7 +20,7 @@ class MainMenu:
         # Cabeçalho
         self.heading = Label(
             self.master, text="Menu Principal", font=("Arial", 24, "bold"),
-           bg="lightblue", fg="white"
+            fg="black"
         )
         self.heading.place(relx=0.5, y=40, anchor=CENTER)
 
